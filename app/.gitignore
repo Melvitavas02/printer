@@ -1,0 +1,29 @@
+@'
+# Node
+node_modules/
+
+# Next build output
+.next/
+out/
+dist/
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Logs
+*.log
+
+# System
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Next types
+next-env.d.ts
+'@ | Set-Content -Path .gitignore -Encoding UTF8
