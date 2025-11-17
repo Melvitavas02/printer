@@ -306,7 +306,7 @@ export default function Home() {
                 </p>
 
                 <div className="flex gap-4">
-                  <a href="/" className="inline-flex items-center px-6 py-3 border border-white/30 text-white rounded-md hover:bg-white/8 transition" aria-label="Read more about Sigma Graphics">
+                  <a href="/about" className="inline-flex items-center px-6 py-3 border border-white/30 text-white rounded-md hover:bg-white/8 transition" aria-label="Read more about Sigma Graphics">
                     Read More
                   </a>
                   
