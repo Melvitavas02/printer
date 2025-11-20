@@ -1,5 +1,6 @@
 // page.tsx
 "use client";
+import Image from "next/image";
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -14,7 +15,8 @@ export default function Home() {
   const aboutRef = useRef<HTMLDivElement | null>(null);
   const precisionRef = useRef<HTMLDivElement | null>(null);
 
-  const openImage = (src: string) => setSelectedImage(src);
+  // encode URIs when opening to handle spaces and special chars
+  const openImage = (src: string) => setSelectedImage(encodeURI(src));
   const closeImage = () => setSelectedImage(null);
 
   // set mounted to true after client mounts to avoid hydration mismatch for animation classes
@@ -279,7 +281,15 @@ export default function Home() {
 
         {/* RIGHT — IMAGE */}
         <div className="md:col-span-8 relative">
-          <img src="/cleaned_right_side.png" className="absolute inset-0 w-full h-full object-cover object-left" alt="Hero Image" />
+          <div className="absolute inset-0">
+            <Image
+              src="/cleaned_right_side.png"
+              alt="Hero Image"
+              fill
+              priority
+              style={{ objectFit: "cover", objectPosition: "left" }}
+            />
+          </div>
           <div className="absolute inset-0 bg-black/10 md:bg-transparent" />
         </div>
 
@@ -355,7 +365,16 @@ export default function Home() {
               >
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20 pointer-events-none" />
-                  <img src="/humaneye.webp" alt="Featured — Sigma Graphics preview" className="w-full h-[320px] md:h-[420px] object-cover will-change-transform" loading="lazy" />
+                 <div className="relative w-full h-[320px] md:h-[420px] will-change-transform overflow-hidden">
+  <Image
+    src="/humaneye.webp"
+    alt="Featured — Sigma Graphics preview"
+    fill
+    style={{ objectFit: "cover" }}
+    priority={false}
+  />
+</div>
+
                   <div className="absolute -right-8 -bottom-8 bg-white/6 backdrop-blur rounded-lg p-3 text-xs font-medium text-white/90 shadow-lg transform rotate-3">Premium Print Samples</div>
                 </div>
               </div>
@@ -438,16 +457,29 @@ export default function Home() {
                 data-anim="left"
                 style={{ transitionDelay: "60ms" }}
               >
-                <img src="/about.jpg" alt="Sigma Graphics team and workspace" className="w-full h-[340px] md:h-[420px] object-cover" loading="lazy" />
+                <div className="relative w-full h-[340px] md:h-[420px]">
+  <Image
+    src="/about.jpg"
+    alt="Sigma Graphics team and workspace"
+    fill
+    style={{ objectFit: "cover" }}
+    priority={false}
+  />
+</div>
 
                 <div className="grid grid-cols-2 gap-5 mt-6">
                   <div className="rounded-xl overflow-hidden shadow-xl transform hover:-translate-y-1 transition-all duration-500">
-                    <img src="/about-6.jpg" alt="Team working" className="w-full h-[150px] object-cover" loading="lazy" />
-                  </div>
+  <div className="relative w-full h-[150px]">
+    <Image src="/about-6.jpg" alt="Team working" fill style={{ objectFit: "cover" }} />
+  </div>
+</div>
 
-                  <div className="rounded-xl overflow-hidden shadow-xl transform hover:-translate-y-1 transition-all duration-500">
-                    <img src="/about-7.jpg" alt="Printing process" className="w-full h-[150px] object-cover" loading="lazy" />
-                  </div>
+                <div className="rounded-xl overflow-hidden shadow-xl transform hover:-translate-y-1 transition-all duration-500">
+  <div className="relative w-full h-[150px]">
+    <Image src="/about-7.jpg" alt="Team working" fill style={{ objectFit: "cover" }} />
+  </div>
+</div>
+
                 </div>
               </div>
             </div>
@@ -592,11 +624,16 @@ export default function Home() {
                         aria-hidden="false"
                       >
                         {/* Background image */}
-                        <div
-                          className="absolute inset-0 z-0 bg-cover bg-center"
-                          style={{ backgroundImage: `url(${svc.img})`, filter: "brightness(.6) saturate(.95)" }}
-                          aria-hidden="true"
-                        />
+                        <div className="absolute inset-0 z-0">
+  <Image
+    src={svc.img}
+    alt={svc.title}
+    fill
+    style={{ objectFit: "cover", filter: "brightness(.6) saturate(.95)" }}
+    sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw"
+    priority={false}
+  />
+</div>
 
                         {/* gradient overlay on hover */}
                         <div className="absolute inset-0 z-10 overlay bg-gradient-to-t from-black/65 to-transparent transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out pointer-events-none" />
@@ -761,37 +798,53 @@ export default function Home() {
       </section>
 
       {/* Auto-Sliding Image Carousel */}
-      <section className="w-full bg-white py-10 overflow-hidden">
-        <div className="relative flex gap-6 animate-scroll whitespace-nowrap">
-          {[0, 1].map((loopIndex) => (
-            <div key={loopIndex} className="flex gap-6">
-              {[
-                "/3.webp",
-                "/5.webp",
-                "/16 (1).webp",
-                "/14.webp",
-                "/1.webp",
-                "/9.webp",
-                "/10.webp",
-                "/16.webp",
-                "/2.webp",
-              ].map((src, i) => (
-                <img
-                  key={`${loopIndex}-${i}`}
+      {/* ================= Auto-Sliding Image Carousel (show full images) ================= */}
+<section className="w-full bg-white py-8 overflow-hidden">
+  <div className="relative">
+    {/* scrolling row — you can keep your animate-scroll keyframes */}
+    <div className="relative flex gap-6 whitespace-nowrap px-6 animate-scroll">
+      {[0, 1].map((loopIndex) => (
+        <div key={loopIndex} className="flex gap-6">
+          {[
+            "/3.webp",
+            "/5.webp",
+            "/16 (1).webp",
+            "/14.webp",
+            "/1.webp",
+            "/9.webp",
+            "/10.webp",
+            "/16.webp",
+            "/2.webp",
+          ].map((src, i) => (
+            // card (use flex-none so it won't shrink in the scrolling row)
+            <div
+              key={`${loopIndex}-${i}`}
+              role="button"
+              tabIndex={0}
+              aria-label={`Open image ${i + 1}`}
+              onClick={() => openImage(src)}
+              onKeyDown={(e) => handleImageKey(e, src)}
+              className="flex-none w-36 sm:w-40 md:w-48 h-56 rounded-xl shadow-lg overflow-hidden bg-white flex items-center justify-center cursor-pointer transform hover:scale-105 transition"
+            >
+              {/* image fills the card but uses contain so whole image is visible */}
+              <div className="relative w-full h-full">
+                <Image
                   src={src}
                   alt={`Slide ${i + 1}`}
-                  onClick={() => openImage(src)}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Open image ${i + 1}`}
-                  onKeyDown={(e) => handleImageKey(e, src)}
-                  className="h-48 rounded-lg shadow-lg object-cover cursor-pointer hover:scale-105 transition"
+                  fill
+                  style={{ objectFit: "contain", backgroundColor: "transparent" }}
+                  sizes="120px"
+                  priority={false}
                 />
-              ))}
+              </div>
             </div>
           ))}
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
+
 
       {/* IMAGE POPUP / LIGHTBOX */}
       {selectedImage && (
@@ -801,11 +854,26 @@ export default function Home() {
           onClick={closeImage}
           className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
         >
+          {/* Use a plain <img> for the modal to avoid fill/parent-size issues */}
+          <button
+            aria-label="Close"
+            onClick={closeImage}
+            className="absolute z-50 w-10 h-10 rounded-full bg-black/40 flex items-center justify-center text-white top-6 right-6 border border-white/20"
+          >
+            ×
+          </button>
+
           <img
             src={selectedImage}
             alt="Enlarged"
-            className="max-w-[90%] max-h-[90%] rounded-lg shadow-2xl animate-zoom"
             onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: "90%",
+              maxHeight: "90%",
+              objectFit: "contain",
+              borderRadius: 12,
+              boxShadow: "0 30px 60px rgba(0,0,0,0.6)",
+            }}
           />
         </div>
       )}

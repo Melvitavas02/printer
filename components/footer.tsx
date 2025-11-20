@@ -26,6 +26,11 @@ export default function Footer() {
 
             {/* Use smaller text and compact spacing for footer links */}
             <ul className="space-y-2 text-sm text-white/80">
+            <li>
+                <Link href="/" className="hover:text-white transition-colors">
+                  Home
+                </Link>
+              </li>
               <li>
                 <Link href="/about" className="hover:text-white transition-colors">
                   About Us
@@ -39,14 +44,14 @@ export default function Footer() {
               </li>
 
               <li>
-                <Link href="/pricing" className="hover:text-white transition-colors">
-                  Pricing
+                <Link href="/portfolio" className="hover:text-white transition-colors">
+                  Portfolio
                 </Link>
               </li>
 
               <li>
-                <Link href="/faq" className="hover:text-white transition-colors">
-                  FAQ &amp; ANS
+                <Link href="/contact" className="hover:text-white transition-colors">
+                  Contact
                 </Link>
               </li>
             </ul>
