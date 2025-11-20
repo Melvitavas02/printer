@@ -374,6 +374,9 @@ a.read-more-btn > svg {
 
 /* ===== Contact button — target the actual <button> element so anchors are unaffected ===== */
 /* Use this to restore Contact Us sizing — tweak padding/font-size to taste */
+/* Contact button — apply to both anchors and buttons */
+a.contact-btn,
+a.contact-btn:focus,
 button.contact-btn,
 button.contact-btn:focus {
   display: inline-flex !important;
@@ -390,6 +393,8 @@ button.contact-btn:focus {
 }
 
 /* Contact button svg */
+a.contact-btn svg,
+a.contact-btn > svg,
 button.contact-btn svg,
 button.contact-btn > svg {
   width: 16px !important;
@@ -399,10 +404,9 @@ button.contact-btn > svg {
 }
 
 
-a[href="/services"] {
-  padding: 2px 3px !important;
-  font-size: 12px !important;
-}
+
+
+
 @keyframes fadeUpSlow {
   0% { opacity: 0; transform: translateY(30px); }
   100% { opacity: 1; transform: translateY(0); }

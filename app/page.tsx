@@ -7,6 +7,8 @@ import { ArrowRight, Printer, Palette, Zap, Layers, FileText, CreditCard, Award 
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
   const servicesRef = useRef<HTMLDivElement | null>(null);
   const infoRef = useRef<HTMLDivElement | null>(null);
   const aboutRef = useRef<HTMLDivElement | null>(null);
@@ -14,6 +16,11 @@ export default function Home() {
 
   const openImage = (src: string) => setSelectedImage(src);
   const closeImage = () => setSelectedImage(null);
+
+  // set mounted to true after client mounts to avoid hydration mismatch for animation classes
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Info section reveal (kept)
   useEffect(() => {
@@ -182,6 +189,17 @@ export default function Home() {
         .reveal.staggered { transition-duration: 700ms; }
         .reveal img { backface-visibility: hidden; transform-origin: center; }
 
+        /* SERVICES small animation set */
+        @media (prefers-reduced-motion: no-preference) {
+          .svc-reveal { opacity: 0; transform: translateX(0); transition: transform 650ms cubic-bezier(.16,.84,.28,1), opacity 650ms cubic-bezier(.16,.84,.28,1); }
+          .svc-from-left  { transform: translateX(-48px); }
+          .svc-from-right { transform: translateX(48px); }
+          .svc-visible    { opacity: 1; transform: translateX(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .svc-reveal, .svc-visible { opacity: 1 !important; transform: none !important; transition: none !important; }
+        }
+
         /* SERVICES: improved visibility & hover animation */
         .service-card {
           transition: transform 350ms cubic-bezier(.16,.84,.28,1), box-shadow 350ms cubic-bezier(.16,.84,.28,1);
@@ -270,7 +288,7 @@ export default function Home() {
           <div className="w-full px-6 md:pl-20 lg:pl-32 xl:pl-40 pointer-events-auto">
             {/* HEADLINE (left entrance) */}
             <h1
-              className="reveal text-white font-extrabold leading-[1.05] text-[36px] sm:text-[52px] md:text-[70px] lg:text-[85px]"
+              className={`reveal text-white font-extrabold leading-[1.05] text-[36px] sm:text-[52px] md:text-[70px] lg:text-[85px]`}
               data-anim="left"
               style={{ transitionDelay: "40ms" }}
             >
@@ -308,7 +326,6 @@ export default function Home() {
       <section className="relative overflow-hidden pt-6 mt-0">
         {/* full-bleed pattern */}
         <div
-         
           className="absolute inset-0"
           style={{
             backgroundColor: "#f0414f",
@@ -475,250 +492,264 @@ export default function Home() {
         </div>
       </section>
 
-    {/* ----------------------- SERVICES SECTION (mobile-friendly) ----------------------- */}
-<section className="relative" style={{ background: "#fff6f6" }}>
-  <style>{`
-    /* Small, reusable entrance animation (respects reduced-motion) */
-    @media (prefers-reduced-motion: no-preference) {
-      .svc-reveal { opacity: 0; transform: translateX(0); transition: transform 650ms cubic-bezier(.16,.84,.28,1), opacity 650ms cubic-bezier(.16,.84,.28,1); }
-      .svc-from-left  { transform: translateX(-48px); }
-      .svc-from-right { transform: translateX(48px); }
-      .svc-visible    { opacity: 1; transform: translateX(0); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .svc-reveal, .svc-visible { opacity: 1 !important; transform: none !important; transition: none !important; }
-    }
+      {/* ----------------------- SERVICES SECTION (mobile-friendly) ----------------------- */}
+      <section className="relative" style={{ background: "#fff6f6" }}>
+        <style>{`
+          /* Small, reusable entrance animation (respects reduced-motion) */
+          @media (prefers-reduced-motion: no-preference) {
+            .svc-reveal { opacity: 0; transform: translateX(0); transition: transform 650ms cubic-bezier(.16,.84,.28,1), opacity 650ms cubic-bezier(.16,.84,.28,1); }
+            .svc-from-left  { transform: translateX(-48px); }
+            .svc-from-right { transform: translateX(48px); }
+            .svc-visible    { opacity: 1; transform: translateX(0); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .svc-reveal, .svc-visible { opacity: 1 !important; transform: none !important; transition: none !important; }
+          }
 
-    /* minimal hover styles kept */
-    .service-card:hover,
-    .service-card:focus {
-      transform: translateY(-8px);
-      transition: transform 260ms cubic-bezier(.16,.84,.28,1);
-    }
-  `}</style>
+          /* minimal hover styles kept */
+          .service-card:hover,
+          .service-card:focus {
+            transform: translateY(-8px);
+            transition: transform 260ms cubic-bezier(.16,.84,.28,1);
+          }
+        `}</style>
 
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div className="flex flex-col md:flex-row md:items-start gap-12">
-      {/* Left column: heading + CTA */}
-      <div
-        className="md:w-1/3 space-y-6 services-left"
-        // left column reveal classes applied by observer
-        id="services-left"
-      >
-        <h3 className="text-sm font-semibold svc-reveal svc-from-left" style={{ color: "#f0414f" }}>Our Services</h3>
-
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight svc-reveal svc-from-left">
-          Creative & Professional
-          <span className="block text-[#f0414f]">Printing Solutions</span>
-        </h2>
-
-        <p className="text-gray-600 text-base leading-relaxed svc-reveal svc-from-left">
-          We combine craft, premium materials and modern print technology to deliver outstanding results — from small runs to full production.
-        </p>
-
-        {/* BOTH BUTTONS MATCHED — same size, color, hover */}
-        <div className="flex gap-3 svc-reveal svc-from-left">
-          <Link
-            href="/services"
-            className="inline-flex items-center whitespace-nowrap px-4 py-2 text-sm bg-[#f0414f] text-white font-medium rounded-md shadow hover:bg-red-600 transition-all duration-300 relative z-40"
-            aria-label="View all services"
-          >
-            View All Services
-            <svg className="w-3 h-3 ml-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" focusable="false">
-              <path d="M5 12h14" />
-              <path d="M13 5l7 7-7 7" />
-            </svg>
-          </Link>
-
-          <Link
-            href="/contact"
-            className="inline-flex items-center whitespace-nowrap px-4 py-2 text-sm bg-[#f0414f] text-white font-medium rounded-md shadow hover:bg-red-600 transition-all duration-300 relative z-40"
-            aria-label="Get a quote"
-          >
-            Get a Quote
-            <svg className="w-3 h-3 ml-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" focusable="false">
-              <path d="M5 12h14" />
-              <path d="M13 5l7 7-7 7" />
-            </svg>
-          </Link>
-        </div>
-      </div>
-
-      {/* Right column: responsive grid of cards */}
-      <div className="md:w-2/3">
-        <div ref={servicesRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="services-grid">
-          {services.map((svc, idx) => {
-            const Icon = svc.icon;
-            // default each card with svc-reveal; observer will add svc-visible and set from-left/from-right
-            return (
-              <Link
-                key={svc.title}
-                href="/services"
-                aria-label={`${svc.title} — View services`}
-                className="group block"
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="flex flex-col md:flex-row md:items-start gap-12">
+            {/* Left column: heading + CTA */}
+            <div
+              className="md:w-1/3 space-y-6 services-left"
+              // left column reveal classes applied by observer
+              id="services-left"
+            >
+              <h3
+                className={`text-sm font-semibold svc-from-left ${mounted ? "svc-visible" : "svc-reveal"}`}
+                style={{ color: "#f0414f" }}
               >
-                <article
-                  tabIndex={0}
-                  role="button"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") (e.currentTarget as HTMLElement).click();
-                  }}
-                  className={`service-card svc-reveal rounded-2xl overflow-hidden relative group transition-transform transform bg-white shadow-md`}
-                  data-idx={idx}
-                  aria-hidden="false"
+                Our Services
+              </h3>
+
+              <h2
+                className={`text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight svc-from-left ${mounted ? "svc-visible" : "svc-reveal"}`}
+              >
+                Creative & Professional
+                <span className="block text-[#f0414f]">Printing Solutions</span>
+              </h2>
+
+              <p className={`text-gray-600 text-base leading-relaxed svc-from-left ${mounted ? "svc-visible" : "svc-reveal"}`}>
+                We combine craft, premium materials and modern print technology to deliver outstanding results — from small runs to full production.
+              </p>
+
+              {/* BOTH BUTTONS MATCHED — same size, color, hover */}
+              <div className={`flex gap-3 ${mounted ? "svc-visible" : "svc-reveal"}`}>
+                <Link
+                  href="/services"
+                  className="inline-flex items-center whitespace-nowrap px-4 py-2 text-sm bg-[#f0414f] text-white font-medium rounded-md shadow hover:bg-red-600 transition-all duration-300 relative z-40"
+                  aria-label="View all services"
                 >
-                  {/* Background image */}
-                  <div
-                    className="absolute inset-0 z-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${svc.img})`, filter: "brightness(.6) saturate(.95)" }}
-                    aria-hidden="true"
-                  />
+                  View All Services
+                  <svg className="w-3 h-3 ml-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" focusable="false">
+                    <path d="M5 12h14" />
+                    <path d="M13 5l7 7-7 7" />
+                  </svg>
+                </Link>
 
-                  {/* gradient overlay on hover */}
-                  <div className="absolute inset-0 z-10 overlay bg-gradient-to-t from-black/65 to-transparent transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out pointer-events-none" />
-
-                  {/* Content */}
-                  <div className="relative z-20 p-6 flex flex-col h-full">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 shadow-sm">
-                          {Icon ? <Icon className="w-6 h-6 text-[#f0414f]" aria-hidden="true" /> : null}
-                        </div>
-
-                        <div>
-                          <h4 className="service-title text-lg font-semibold text-white" style={{ textShadow: "0 6px 20px rgba(2,6,23,0.6)" }}>{svc.title}</h4>
-                        </div>
-                      </div>
-
-                      {/* mobile Learn More badge */}
-                      <div className="ml-3 flex items-center md:hidden">
-                        <span className="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium bg-white text-rose-600 shadow whitespace-nowrap">
-                          Learn More
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Desktop hover content */}
-                    <div className="mt-auto pt-4">
-                      <div className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-400">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            window.location.href = "/services";
-                          }}
-                          className="hidden md:inline-flex items-center whitespace-nowrap px-4 py-2 rounded-md text-sm font-medium bg-white text-rose-600 shadow hover:scale-105 transition"
-                        >
-                          Learn More →
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="absolute left-4 right-4 bottom-4 h-px bg-gradient-to-r from-transparent via-black/10 to-transparent z-0" />
-                </article>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {/* IntersectionObserver for this section — put inside JSX so it executes on render */}
-  <script
-    // eslint-disable-next-line react/no-danger
-    dangerouslySetInnerHTML={{
-      __html: `
-(function () {
-  try {
-    if (typeof window === 'undefined' || !document) return;
-    const container = document.getElementById('services-grid');
-    const leftCol = document.getElementById('services-left');
-    if (!container || !leftCol) return;
-
-    const cards = Array.from(container.querySelectorAll('.svc-reveal'));
-    if (!cards.length) return;
-
-    // IntersectionObserver triggers the entrance once
-    const io = new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        // reveal left column first (small stagger)
-        Array.from(leftCol.querySelectorAll('.svc-reveal')).forEach((el, i) => {
-          setTimeout(() => el.classList.add('svc-visible'), i * 80);
-        });
-
-        // reveal cards with alternate left / right + stagger
-        cards.forEach((card, i) => {
-          // only animate actual service cards (not the left column elements)
-          const isCard = card.closest('#services-grid') !== null;
-          if (!isCard) return;
-          const animClass = (i % 2 === 0) ? 'svc-from-left' : 'svc-from-right';
-          card.classList.add(animClass);
-          setTimeout(() => card.classList.add('svc-visible'), 200 + i * 120);
-        });
-
-        obs.unobserve(entry.target); // run once
-      });
-    }, { threshold: 0.15, root: null, rootMargin: '0px' });
-
-    io.observe(container);
-  } catch (e) {
-    // fail silently; page still usable
-    console.warn('Services reveal init failed', e);
-  }
-})();
-`,
-    }}
-  />
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      {/* footer-ish black callout */}
-      <section className="bg-black text-white py-4">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 flex items-center justify-center bg-red-600 rounded-full shadow-md flex-shrink-0">
-              <Award className="w-5 h-5 text-white" aria-hidden="true" focusable="false" />
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center whitespace-nowrap px-4 py-2 text-sm bg-[#f0414f] text-white font-medium rounded-md shadow hover:bg-red-600 transition-all duration-300 relative z-40"
+                  aria-label="Get a quote"
+                >
+                  Get a Quote
+                  <svg className="w-3 h-3 ml-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" focusable="false">
+                    <path d="M5 12h14" />
+                    <path d="M13 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
             </div>
-            <div className="leading-snug">
-              <p className="text-sm md:text-base font-semibold opacity-95">Printing Excellence, Lasting Impressions</p>
-              <p className="text-sm md:text-base opacity-80">At Sigma Design, we ensure effective communication and memorable brand experiences.</p>
+
+            {/* Right column: responsive grid of cards */}
+            <div className="md:w-2/3">
+              <div ref={servicesRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="services-grid">
+                {services.map((svc, idx) => {
+                  const Icon = svc.icon;
+                  // default each card with svc-reveal; observer will add svc-visible and set from-left/from-right
+                  return (
+                    <Link
+                      key={svc.title}
+                      href="/services"
+                      aria-label={`${svc.title} — View services`}
+                      className="group block"
+                    >
+                      <article
+                        tabIndex={0}
+                        role="button"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") (e.currentTarget as HTMLElement).click();
+                        }}
+                        className={`service-card ${mounted ? "svc-visible" : "svc-reveal"} rounded-2xl overflow-hidden relative group transition-transform transform bg-white shadow-md`}
+                        data-idx={idx}
+                        aria-hidden="false"
+                      >
+                        {/* Background image */}
+                        <div
+                          className="absolute inset-0 z-0 bg-cover bg-center"
+                          style={{ backgroundImage: `url(${svc.img})`, filter: "brightness(.6) saturate(.95)" }}
+                          aria-hidden="true"
+                        />
+
+                        {/* gradient overlay on hover */}
+                        <div className="absolute inset-0 z-10 overlay bg-gradient-to-t from-black/65 to-transparent transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out pointer-events-none" />
+
+                        {/* Content */}
+                        <div className="relative z-20 p-6 flex flex-col h-full">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 shadow-sm">
+                                {Icon ? <Icon className="w-6 h-6 text-[#f0414f]" aria-hidden="true" /> : null}
+                              </div>
+
+                              <div>
+                                <h4 className="service-title text-lg font-semibold text-white" style={{ textShadow: "0 6px 20px rgba(2,6,23,0.6)" }}>{svc.title}</h4>
+                              </div>
+                            </div>
+
+                            {/* mobile Learn More badge */}
+                            <div className="ml-3 flex items-center md:hidden">
+                              <span className="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium bg-white text-rose-600 shadow whitespace-nowrap">
+                                Learn More
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Desktop hover content */}
+                          <div className="mt-auto pt-4">
+                            <div className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-400">
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  window.location.href = "/services";
+                                }}
+                                className="hidden md:inline-flex items-center whitespace-nowrap px-4 py-2 rounded-md text-sm font-medium bg-white text-rose-600 shadow hover:scale-105 transition"
+                              >
+                                Learn More →
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="absolute left-4 right-4 bottom-4 h-px bg-gradient-to-r from-transparent via-black/10 to-transparent z-0" />
+                      </article>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           </div>
-
-          <Link
-            href="/contact"
-            className="contact-btn px-6 py-2 bg-[#f0414f] hover:bg-red-700 text-white rounded-md text-sm font-semibold shadow-md transition flex items-center gap-2"
-            aria-label="Contact us"
-          >
-            Contact Us
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14m-7-7l7 7-7 7" />
-            </svg>
-          </Link>
         </div>
+
+        {/* IntersectionObserver for this section — put inside JSX so it executes on render */}
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: `
+  (function () {
+    try {
+      if (typeof window === 'undefined' || !document) return;
+      const container = document.getElementById('services-grid');
+      const leftCol = document.getElementById('services-left');
+      if (!container || !leftCol) return;
+
+      const cards = Array.from(container.querySelectorAll('.svc-reveal, .service-card'));
+      if (!cards.length) return;
+
+      // IntersectionObserver triggers the entrance once
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          // reveal left column first (small stagger)
+          Array.from(leftCol.querySelectorAll('.svc-reveal')).forEach((el, i) => {
+            setTimeout(() => el.classList.add('svc-visible'), i * 80);
+          });
+
+          // reveal cards with alternate left / right + stagger
+          cards.forEach((card, i) => {
+            // only animate actual service cards (not the left column elements)
+            const isCard = card.closest('#services-grid') !== null;
+            if (!isCard) return;
+            const animClass = (i % 2 === 0) ? 'svc-from-left' : 'svc-from-right';
+            card.classList.add(animClass);
+            setTimeout(() => card.classList.add('svc-visible'), 200 + i * 120);
+          });
+
+          obs.unobserve(entry.target); // run once
+        });
+      }, { threshold: 0.15, root: null, rootMargin: '0px' });
+
+      io.observe(container);
+    } catch (e) {
+      // fail silently; page still usable
+      console.warn('Services reveal init failed', e);
+    }
+  })();
+  `,
+          }}
+        />
       </section>
+
+      {/* footer-ish black callout — mobile taller only */}
+<section className="bg-black text-white py-4 sm:py-4">
+  <div
+    className="
+      max-w-7xl mx-auto px-6 
+      flex flex-col sm:flex-row 
+      items-start sm:items-center 
+      justify-between 
+      gap-4 sm:gap-6
+
+      /* MOBILE ONLY — increase height + spacing */
+      min-h-[170px] sm:min-h-[0]
+      py-6 sm:py-0
+    "
+  >
+    {/* LEFT TEXT */}
+    <div className="flex items-start gap-4 w-full sm:flex-1 min-w-0">
+      <div className="w-10 h-10 flex items-center justify-center bg-red-600 rounded-full shadow-md flex-shrink-0">
+        <Award className="w-5 h-5 text-white" aria-hidden="true" />
+      </div>
+
+      <div className="leading-snug min-w-0">
+        <p className="text-sm md:text-base font-semibold opacity-95 break-words">
+          Printing Excellence, Lasting Impressions
+        </p>
+        <p className="text-sm md:text-base opacity-80 break-words mt-1">
+          At Sigma Design, we ensure effective communication and memorable brand experiences.
+        </p>
+      </div>
+    </div>
+
+    {/* RIGHT BUTTON */}
+    <div className="w-full sm:w-auto flex-shrink-0">
+      <Link
+        href="/contact"
+        className="
+          contact-btn inline-flex items-center justify-center 
+          w-full sm:w-auto 
+          px-5 py-3 bg-[#f0414f] hover:bg-[#ff5b6a] text-white 
+          rounded-md text-sm font-semibold shadow-md 
+          transition-all duration-300 
+        "
+      >
+        Contact Us
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14m-7-7l7 7-7 7" />
+        </svg>
+      </Link>
+    </div>
+  </div>
+</section>
+
 
 
       {/* Precision printing hero */}
@@ -761,7 +792,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-      
 
       {/* IMAGE POPUP / LIGHTBOX */}
       {selectedImage && (

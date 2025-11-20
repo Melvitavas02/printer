@@ -147,6 +147,8 @@ export default function About() {
             <p data-animate data-stagger="true" data-direction="up" className="mt-4 text-base md:text-lg text-white/90 reveal">
               We combine creativity with precision to deliver stunning print & design solutions.
             </p>
+
+          
           </div>
         </div>
 
@@ -188,7 +190,7 @@ export default function About() {
             </p>
 
             <div className="mt-6">
-              <a href="/services" className="inline-block px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow transition transform btn-fade reveal" data-animate data-stagger="true" data-direction="left" aria-label="Explore our services">
+              <a href="/services" className="inline-block px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow transition transform btn-fade reveal" data-animate data-stagger="true" data-direction="left">
                 Explore Our Services
               </a>
             </div>
@@ -249,9 +251,7 @@ export default function About() {
             </div>
 
             <div data-animate data-stagger="true" data-direction="right" className="mt-4 reveal">
-              <a href="/contact" className="inline-block px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow transition btn-fade" aria-label="Contact us">
-                Contact Us
-              </a>
+              <a href="/contact" className="inline-block px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow transition btn-fade">Contact Us</a>
             </div>
           </div>
         </div>
@@ -272,38 +272,39 @@ export default function About() {
                 We blend creativity with precision to craft printed materials that leave a lasting impression. Innovation, quality and friendly service are at the heart of everything we do.
               </p>
 
-              <div className="mt-6 flex flex-wrap gap-4">
-                <a
-                  data-animate
-                  data-stagger="true"
-                  data-direction="left"
-                  href="/services"
-                  className="inline-flex items-center justify-center px-8 py-3 text-[18px] font-semibold rounded-full shadow-sm bg-white text-[#f0414f] transition-all duration-200 hover:bg-red-100 reveal min-w-[200px]"
-                  aria-label="Explore Services"
-                >
-                  Explore Services
-                </a>
+      <div className="mt-6 flex flex-wrap gap-4">
+  <a
+    data-animate
+    data-stagger="true"
+    data-direction="left"
+    href="/services"
+    className="inline-flex items-center justify-center px-8 py-3 text-[18px] font-semibold rounded-full shadow-sm bg-white text-[#f0414f] transition-all duration-200 hover:bg-red-100 reveal min-w-[200px]"
+  >
+    Explore Services
+  </a>
 
-                <a
-                  data-animate
-                  data-stagger="true"
-                  data-direction="left"
-                  href="/contact"
-                  className="inline-flex items-center justify-center px-8 py-3 text-[18px] font-semibold rounded-full shadow-sm bg-white text-[#f0414f] transition-all duration-200 hover:bg-red-100 reveal min-w-[200px]"
-                  aria-label="Talk to us"
-                >
-                  Talk to Us
-                </a>
-              </div>
+  <a
+    data-animate
+    data-stagger="true"
+    data-direction="left"
+    href="/contact"
+    className="inline-flex items-center justify-center px-8 py-3 text-[18px] font-semibold rounded-full shadow-sm bg-white text-[#f0414f] transition-all duration-200 hover:bg-red-100 reveal min-w-[200px]"
+  >
+    Talk to Us
+  </a>
+</div>
+
+
+
             </div>
 
             <div data-animate data-stagger="true" data-direction="right" className="flex flex-col gap-4 reveal">
-              <article className="group relative rounded-xl p-5 md:p-6 bg-white shadow-sm border border-white/20 hover:shadow-md transition overflow-hidden">
+              <article className="group relative rounded-xl p-5 md:p-6 bg-white shadow-sm border border-white/20 hover:shadow-md transition overflow-hidden cursor-pointer">
                 <div aria-hidden="true" className="absolute inset-0 bg-[#f0414f]/95 transform -translate-y-full group-hover:translate-y-0 group-focus:translate-y-0 transition-transform duration-500 ease-out pointer-events-none" style={{ zIndex: 10 }} />
 
                 <div className="relative z-20 flex items-start gap-3 group-hover:text-white transition-colors duration-300">
                   <div className="flex-none bg-[#f0414f]/10 rounded-lg p-2">
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" focusable="false">
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                       <path d="M12 2v6l4 2" strokeLinecap="round" strokeLinejoin="round" />
                       <circle cx="12" cy="14" r="6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -318,12 +319,12 @@ export default function About() {
                 </div>
               </article>
 
-              <article className="group relative rounded-xl p-5 md:p-6 bg-white shadow-sm border border-white/20 hover:shadow-md transition overflow-hidden">
+              <article className="group relative rounded-xl p-5 md:p-6 bg-white shadow-sm border border-white/20 hover:shadow-md transition overflow-hidden cursor-pointer">
                 <div aria-hidden="true" className="absolute inset-0 bg-[#f0414f]/95 transform -translate-y-full group-hover:translate-y-0 group-focus:translate-y-0 transition-transform duration-500 ease-out pointer-events-none" style={{ zIndex: 10 }} />
 
                 <div className="relative z-20 flex items-start gap-3 group-hover:text-white transition-colors duration-300">
                   <div className="flex-none bg-[#f0414f]/10 rounded-lg p-2">
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" focusable="false">
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                       <path d="M3 12h18M12 3v18" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
@@ -338,7 +339,7 @@ export default function About() {
 
                 <div className="mt-4 relative z-20 flex items-center justify-between text-xs text-gray-500 group-hover:text-white/90 transition-colors duration-300">
                   <span>Quality • Creativity</span>
-                  <a href="/portfolio" className="hover:underline group-hover:text-white" aria-label="See portfolio work">See work →</a>
+                  <a href="/portfolio" className="hover:underline group-hover:text-white">See work →</a>
                 </div>
               </article>
             </div>

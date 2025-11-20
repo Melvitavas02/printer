@@ -129,14 +129,14 @@ export default function Portfolio() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
             <div>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-foreground">Our Major Clients</h2>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-[#f0414f]">Our Major Clients</h2>
               <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
                 Trusted brands we’ve partnered with. Click a logo to view larger and learn more.
               </p>
             </div>
 
             <div className="flex items-center gap-3">
-              <a href="/contact" className="px-4 py-2 border border-gray-200 rounded-md text-sm" aria-label="Contact us">Contact Us</a>
+              <a href="/contact" className="px-4 py-2 border border-[#f0414f] rounded-md text-sm" aria-label="Contact us">Contact Us</a>
             </div>
           </div>
 
