@@ -1,10 +1,6 @@
-'use client';
+"use client";
 
-import React, { useEffect } from 'react';
-import Link from 'next/link';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Check, ArrowRight } from 'lucide-react';
+import React, { useEffect } from "react";
 
 export default function Services() {
   const services = [
@@ -23,25 +19,42 @@ export default function Services() {
   ];
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
+    if (typeof window === "undefined") return;
+    const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      // Make sure elements are visible if reduced motion is preferred
+      document.querySelectorAll<HTMLElement>(".service-card, [data-animate]").forEach((el) => el.classList.add("in-view"));
+      return;
+    }
 
-    const observer = new IntersectionObserver(
+    // Observe both cards and any element with data-animate attribute (hero, contact, etc.)
+    const els = Array.from(document.querySelectorAll<HTMLElement>(".service-card, [data-animate]"));
+    if (!els.length) return;
+
+    const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const el = entry.target as HTMLElement;
           if (entry.isIntersecting) {
-            el.classList.add('in-view');
-            observer.unobserve(el); // play once
+            el.classList.add("in-view");
+            io.unobserve(el);
           }
         });
       },
-      { root: null, rootMargin: '0px', threshold: 0.12 }
+      { root: null, rootMargin: "0px", threshold: 0.12 }
     );
 
-    document.querySelectorAll('.service-card').forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    els.forEach((el, i) => {
+      // allow per-item custom delays if you already set CSS var --delay
+      // otherwise provide a sensible stagger fallback
+      if (!el.style.getPropertyValue("--delay")) {
+        el.style.setProperty("--delay", `${i * 220}ms`);
+      }
+      el.style.setProperty("--stagger-index", String(i));
+      io.observe(el);
+    });
+
+    return () => io.disconnect();
   }, []);
 
   return (
@@ -52,7 +65,7 @@ export default function Services() {
         style={{ backgroundImage: `url('/services.jpg')` }}
         aria-label="Services hero"
       >
-       <style>{`
+        <style>{`
   /* Slow fade-up used globally */
   @keyframes fadeUpSlow {
     0% { opacity: 0; transform: translateY(18px) scale(0.98); }
@@ -64,30 +77,26 @@ export default function Services() {
     opacity: 0;
     transform: translateY(18px) scale(0.98);
     will-change: transform, opacity;
+    transition: opacity 700ms cubic-bezier(.16,.84,.24,1), transform 700ms cubic-bezier(.16,.84,.24,1);
   }
 
   .service-card.in-view {
+    /* use CSS animation so we can set animation-delay via inline --delay var */
     animation-name: fadeUpSlow;
     animation-duration: 1000ms; 
     animation-timing-function: cubic-bezier(.16,.84,.24,1);
-    animation-fill-mode: forwards;
+    animation-fill-mode: both;
     animation-delay: var(--delay, 0ms);
   }
 
-  /* HERO animations */
-  .hero-title {
+  /* HERO animations (use data-animate and observer) */
+  .hero-title, .hero-subtext {
     opacity: 0;
-    transform: translateY(20px) scale(0.97);
-    animation: fadeUpSlow 1200ms cubic-bezier(.16,.84,.24,1) forwards;
-    animation-delay: 200ms;
+    transform: translateY(18px);
+    transition: opacity 800ms cubic-bezier(.16,.84,.24,1), transform 800ms cubic-bezier(.16,.84,.24,1);
   }
-
-  .hero-subtext {
-    opacity: 0;
-    transform: translateY(20px) scale(0.97);
-    animation: fadeUpSlow 1400ms cubic-bezier(.16,.84,.24,1) forwards;
-    animation-delay: 450ms;
-  }
+  .hero-title.in-view { opacity: 1; transform: none; transition-delay: 160ms; }
+  .hero-subtext.in-view { opacity: 1; transform: none; transition-delay: 360ms; }
 
   @media (prefers-reduced-motion: reduce) {
     .service-card, .service-card.in-view,
@@ -95,6 +104,7 @@ export default function Services() {
       animation: none !important;
       opacity: 1 !important;
       transform: none !important;
+      transition: none !important;
     }
   }
 
@@ -122,49 +132,47 @@ export default function Services() {
     position: relative;
     z-index: 1;
   }
-    /* Make text readable when the white overlay slides in */
-.card-desc h3,
-.card-desc p {
-  transition: color 260ms ease, transform 260ms ease;
-}
 
-/* switch text to dark when overlay is visible (hover) */
-.card-desc:hover h3,
-.card-desc:hover p {
-  color: #111; /* dark text on white */
-}
-
-/* small lift for a nicer effect (optional) */
-.card-desc:hover h3 {
-  transform: translateY(-2px);
-}
-
-/* Respect prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
+  /* Make text readable when the white overlay slides in */
   .card-desc h3,
   .card-desc p {
-    transition: none;
-    transform: none;
+    transition: color 260ms ease, transform 260ms ease;
   }
-}
-  
 
-`
-}</style>
+  /* switch text to dark when overlay is visible (hover) */
+  .card-desc:hover h3,
+  .card-desc:hover p {
+    color: #111; /* dark text on white */
+  }
 
+  .card-desc:hover h3 {
+    transform: translateY(-2px);
+  }
 
-        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-red-600/65 via-red-600/50 to-red-600/35" style={{ mixBlendMode: 'multiply' }} />
+  @media (prefers-reduced-motion: reduce) {
+    .card-desc h3,
+    .card-desc p {
+      transition: none;
+      transform: none;
+    }
+  }
+`}</style>
+
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-red-600/65 via-red-600/50 to-red-600/35" style={{ mixBlendMode: "multiply" }} />
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 h-full flex items-center justify-center">
           <div className="text-center text-white max-w-3xl">
-            <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
-Our Services</h1>
-            <p className="hero-subtext mt-4 text-base md:text-lg text-white/90">
-Comprehensive printing and design solutions</p>
+            <h1 data-animate className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
+              Our Services
+            </h1>
+            <p data-animate className="hero-subtext mt-4 text-base md:text-lg text-white/90">
+              Comprehensive printing and design solutions
+            </p>
           </div>
         </div>
 
         <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
-          <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-[80px] md:h-[100px] lg:h-[120px] block" aria-hidden>
+          {/* set aria-hidden to true explicitly (React expects a value) */}
+          <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-[80px] md:h-[100px] lg:h-[120px] block" aria-hidden="true">
             <path d="M0,0 C150,80 350,80 600,40 C850,0 1050,0 1200,60 L1200,120 L0,120 Z" fill="#faf5f4" />
           </svg>
         </div>
@@ -182,16 +190,18 @@ Comprehensive printing and design solutions</p>
             {services.map((service, idx) => (
               <article
                 key={service.title}
+                data-animate
                 className="service-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full"
-                style={{ ['--delay' as any]: `${idx * 220}ms` }} /* <-- larger stagger (slower) */
+                style={{ ['--delay' as any]: `${idx * 220}ms` }} /* larger stagger (slower) */
+                role="region"
+                aria-labelledby={`service-${idx}`}
               >
                 <div className="img-wrap h-44 md:h-48 w-full relative overflow-hidden rounded-t-xl flex-shrink-0">
                   <img src={service.img} alt={service.title} className="w-full h-full object-cover block" loading="lazy" />
                 </div>
 
                 <div className="p-5 mt-auto card-desc" style={{ backgroundColor: "#f0414f" }}>
-
-                  <h3 className="text-lg font-semibold text-white mb-2">{service.title}</h3>
+                  <h3 id={`service-${idx}`} className="text-lg font-semibold text-white mb-2">{service.title}</h3>
                   <p className="text-sm text-white leading-relaxed">{service.text}</p>
                 </div>
               </article>
@@ -201,11 +211,7 @@ Comprehensive printing and design solutions</p>
       </section>
 
       {/* ADDITIONAL SERVICES */}
-     <section
-  className="pt-10 md:pt-16 pb-20 md:pb-24 backdrop-blur-sm"
-  style={{ backgroundColor: "rgba(240,240,240,0.55)" }}
->
-
+      <section className="pt-10 md:pt-16 pb-20 md:pb-24 backdrop-blur-sm" style={{ backgroundColor: "rgba(240,240,240,0.55)" }}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="text-xs md:text-sm tracking-[0.2em] uppercase text-black">More Options For You</p>
@@ -224,8 +230,11 @@ Comprehensive printing and design solutions</p>
             ].map((service, idx) => (
               <article
                 key={service.title}
+                data-animate
                 className="service-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 flex flex-col h-full"
                 style={{ ['--delay' as any]: `${(idx + 6) * 220}ms` }}
+                role="region"
+                aria-labelledby={`additional-service-${idx}`}
               >
                 <div className="img-wrap h-44 md:h-48 w-full relative overflow-hidden rounded-t-xl flex-shrink-0">
                   <img src={service.img} alt={service.title} className="w-full h-full object-cover block" loading="lazy" />
@@ -233,8 +242,7 @@ Comprehensive printing and design solutions</p>
                 </div>
 
                 <div className="p-5 mt-auto card-desc" style={{ backgroundColor: "#f0414f" }}>
-
-                  <h3 className="text-lg font-semibold text-white mb-2">{service.title}</h3>
+                  <h3 id={`additional-service-${idx}`} className="text-lg font-semibold text-white mb-2">{service.title}</h3>
                   <p className="text-sm text-white leading-relaxed">{service.text}</p>
                 </div>
               </article>
@@ -243,12 +251,9 @@ Comprehensive printing and design solutions</p>
         </div>
       </section>
 
-
-
-{/* FINAL CONTACT SECTION */}
-{/* CONTACT — Modern Centered Design (single block, no right side) */}
-<section className="relative py-20 bg-white overflow-hidden" aria-labelledby="contact-heading-modern">
-  <style>{`
+      {/* FINAL CONTACT SECTION */}
+      <section className="relative py-20 bg-white overflow-hidden" aria-labelledby="contact-heading-modern">
+        <style>{`
     /* Background wave */
     .contact-wave-top {
       position:absolute;
@@ -257,7 +262,6 @@ Comprehensive printing and design solutions</p>
       pointer-events:none;
       z-index:1;
     }
-
     /* Decorative blobs */
     .blob-a, .blob-b {
       position:absolute;
@@ -278,7 +282,6 @@ Comprehensive printing and design solutions</p>
       bottom:18%; right:-6%;
       transform:rotate(9deg);
     }
-
     /* Central card */
     .contact-center {
       position:relative;
@@ -292,7 +295,11 @@ Comprehensive printing and design solutions</p>
       box-shadow:0 18px 48px rgba(0,0,0,0.07);
       border:1px solid rgba(0,0,0,0.035);
       backdrop-filter:blur(4px);
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 800ms cubic-bezier(.16,.84,.24,1), transform 800ms cubic-bezier(.16,.84,.24,1);
     }
+    .contact-center.in-view { opacity: 1; transform: none; transition-delay: 120ms; }
 
     .eyebrow {
       font-size:12px;
@@ -302,7 +309,6 @@ Comprehensive printing and design solutions</p>
       letter-spacing:.14em;
       margin-bottom:10px;
     }
-
     .contact-title {
       font-size:clamp(1.8rem, 3vw, 2.6rem);
       font-weight:800;
@@ -310,7 +316,6 @@ Comprehensive printing and design solutions</p>
       color:#0f1724;
       line-height:1.08;
     }
-
     .contact-sub {
       margin:0 auto 24px;
       color:#475569;
@@ -318,7 +323,6 @@ Comprehensive printing and design solutions</p>
       max-width:620px;
       line-height:1.65;
     }
-
     .contact-cta {
       display:inline-flex;
       align-items:center;
@@ -337,7 +341,6 @@ Comprehensive printing and design solutions</p>
       transform:translateY(-3px);
       box-shadow:0 18px 40px rgba(240,65,79,0.24);
     }
-
     /* floating circles */
     .float-dot {
       position:absolute;
@@ -351,67 +354,53 @@ Comprehensive printing and design solutions</p>
     .float-dot.d1 { top:14%; left:20%; animation-delay:0s; }
     .float-dot.d2 { top:32%; right:18%; animation-delay:1.2s; }
     .float-dot.d3 { bottom:20%; left:42%; animation-delay:2.1s; }
-
     @keyframes bob {
       0% { transform:translateY(0); }
       50% { transform:translateY(-9px); }
       100% { transform:translateY(0); }
     }
-
     @media (max-width:768px){
       .contact-center { padding:36px 22px; }
       .float-dot { display:none; }
       .blob-a,.blob-b { display:none; }
     }
-
     @media (prefers-reduced-motion:reduce){
       .float-dot { animation:none !important; }
+      .contact-center { transition:none !important; transform:none !important; opacity:1 !important; }
     }
   `}</style>
 
-  {/* wave connection */}
-  <div className="contact-wave-top" aria-hidden>
-    <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-full block">
-      <path d="M0,0 C150,80 350,80 600,40 C850,0 1050,0 1200,60 L1200,120 L0,120 Z" fill="#ffffff"/>
-    </svg>
-  </div>
+        {/* wave connection */}
+        <div className="contact-wave-top" aria-hidden="true">
+          <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-full block" aria-hidden="true">
+            <path d="M0,0 C150,80 350,80 600,40 C850,0 1050,0 1200,60 L1200,120 L0,120 Z" fill="#ffffff" />
+          </svg>
+        </div>
 
-  {/* background blobs */}
-  <div className="blob-a" aria-hidden></div>
-  <div className="blob-b" aria-hidden></div>
+        {/* background blobs */}
+        <div className="blob-a" aria-hidden="true"></div>
+        <div className="blob-b" aria-hidden="true"></div>
 
-  {/* floating dots */}
-  <span className="float-dot d1" aria-hidden></span>
-  <span className="float-dot d2" aria-hidden></span>
-  <span className="float-dot d3" aria-hidden></span>
+        {/* floating dots */}
+        <span className="float-dot d1" aria-hidden="true"></span>
+        <span className="float-dot d2" aria-hidden="true"></span>
+        <span className="float-dot d3" aria-hidden="true"></span>
 
-  {/* center content */}
-  <div className="contact-center">
-    <div className="eyebrow">More Options For You</div>
-    <h2 id="contact-heading-modern" className="contact-title">
-      Let’s create something amazing together! Sigma Graphics
-    </h2>
-    <p className="contact-sub">
-      From printing to branding and creative design solutions — our team is ready to help bring your ideas to life. Start your project with us today.
-    </p>
+        {/* center content */}
+        <div data-animate className="contact-center" role="region" aria-labelledby="contact-heading-modern">
+          <div className="eyebrow">More Options For You</div>
+          <h2 id="contact-heading-modern" className="contact-title">
+            Let’s create something amazing together! Sigma Graphics
+          </h2>
+          <p className="contact-sub">
+            From printing to branding and creative design solutions — our team is ready to help bring your ideas to life. Start your project with us today.
+          </p>
 
-    <a href="/contact" className="contact-cta">
-      Contact Us
-    </a>
-  </div>
-</section>
-
-
-
-
-
-
-
-
-
-
-
-      
+          <a href="/contact" className="contact-cta" aria-label="Contact us">
+            Contact Us
+          </a>
+        </div>
+      </section>
     </div>
   );
 }

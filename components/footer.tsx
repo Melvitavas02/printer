@@ -116,7 +116,7 @@ export default function Footer() {
     {/* CENTER — COPYRIGHT TEXT */}
     <div className="text-sm text-white text-center">
       Copyright &amp; 2025 sigma-graphics.com. Powered by 
-      <span className="font-semibold">  sigma-graphics.com</span> 
+      <span className="font-semibold">  Vision Flow Technologies</span> 
     </div>
 
     {/* RIGHT — SOCIAL ICONS + TOP BUTTON */}
